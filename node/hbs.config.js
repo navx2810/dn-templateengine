@@ -1,6 +1,8 @@
 // Import the engine library
 const hbs = require("handlebars")
 const filters = require("./filters")
+const fs = require('fs')
+const path = require('path')
 
 /**
     Initialize the engine library with any helper, mixins. . ., any features you can use in the template.
@@ -26,6 +28,12 @@ hbs.registerHelper("lowercase", function(input) { return filters.lowercase( hbs.
 hbs.registerHelper("capitalize", function(input) { return filters.capitalize( hbs.escapeExpression(input) ) })
 hbs.registerHelper("currency", function(input) { return filters.currency( hbs.escapeExpression(input) ) })
 hbs.registerHelper("json", function(input, pretty) { return new hbs.SafeString(filters.json(input, pretty)) })
+hbs.registerHelper("require", function(route, vm) {
+    route = path.join('.', route.replace(/^ |~/, ''))
+    let template = fs.readFileSync(route,  'utf-8')
+    vm = vm || this
+    return hbs.compile(template)(this)
+})
 
 // Return the configured module
 module.exports = hbs
