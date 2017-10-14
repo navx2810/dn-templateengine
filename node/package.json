@@ -1,0 +1,9 @@
+{
+  "name": "MarketCarpenter Node Services",
+  "version": "1.0.0",
+  "author": "Matt Fetterman <mattfetterman@gmail.com>",
+  "dependencies": {
+    "handlebars": "^4.0.10",
+    "moment": "^2.19.1"
+  }
+}

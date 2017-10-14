@@ -1,0 +1,13 @@
+{{!-- see "/node/hbs.config.js" for all of these mixins --}}
+{{!-- I'm a comment in handlebars! --}}
+{{!-- 'today' is a C# DateTime, 'name' is a string from viewmodel --}}
+Hello, {{name}}. How are you today, the date is {{date today "LL"}}?
+{{!-- Raw string values not as a variable in the viewmodel, must be encapsulated as a string --}}
+I'm so {{uppercase "excited"}},
+Because single {{uppercase 'quotes'}} also work
+For handlerbars to {{lowercase "WORK"}}.
+{{!-- Handlebars allows you to use multiple mixins if they are treated like a function call and scoped to '()' --}}
+from inside {{capitalize (lowercase "MOJOACTIVE")}}.
+For the low price of ${{currency 29.3864}}, you too can own this.
+{{!-- 'this' can be used to access the global view model itself --}}
+Here is a JSON printout of the viewmodel {{json this}}
