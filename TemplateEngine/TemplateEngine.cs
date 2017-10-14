@@ -1,43 +1,59 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.NodeServices;
 
-namespace Mojo.Framework
+namespace Mojo.Framework.Templating
 {
-    public interface ITemplateEngine
+    public interface IEngine
     {
-        Task<string> Render(string path, object VM);
+        ITemplate Compile(string path);
     }
 
-    public class TemplateEngine : ITemplateEngine
+    public interface ITemplate
     {
-        public TemplateEngine(INodeServices service, IHostingEnvironment env) { this.services = service; this.env = env; }
+        string Render(object vm);
+    }
+
+    public class Engine : IEngine
+    {
         private INodeServices services;
         private IHostingEnvironment env;
-
         private Dictionary<string, string> handlers = new Dictionary<string, string>
         {
             { ".hbs", "hbs.compiler.js" }
         };
-
-        async Task<string> ITemplateEngine.Render(string path, object VM)
+        public Engine(INodeServices serv, IHostingEnvironment env) { this.services = serv; this.env = env; }
+        ITemplate IEngine.Compile(string relPath)
         {
+            string fullPath = Path.Combine(env.WebRootPath, relPath);
+            if (!File.Exists(fullPath)) { throw new FileNotFoundException($"The template path of {fullPath} does not exist."); }
+            else
             {
-                string template;
-                string res = string.Empty;
-                path = Path.Combine(env.WebRootPath, path);
-                if (!File.Exists(path)) { throw new FileNotFoundException($"The template path of {path} does not exist."); }
-                else { template = File.ReadAllText(path); }
-
-                string js_file;
-                if (handlers.TryGetValue(Path.GetExtension(path), out js_file))
-                {
-                    res = await services.InvokeAsync<string>(Path.Combine(env.ContentRootPath, "node", js_file), template, VM);
-                }
-                return res;
+                Task<string> Runner = Task.Run(() => ReadTemplate(fullPath));
+                return new Template { Node = services, JSCompilerPath = Path.Combine(env.ContentRootPath, "node", (handlers[Path.GetExtension(fullPath)])), TemplateReadTask = Runner };
             }
         }
+        private async Task<string> ReadTemplate(string path)
+        {
+            return await File.ReadAllTextAsync(path);
+        }
     }
+
+    public class Template : ITemplate
+    {
+        public Task<string> TemplateReadTask { get; set; }
+        public INodeServices Node { get; set; }
+        public string JSCompilerPath { get; set; }
+        string ITemplate.Render(object vm)
+        {
+            TemplateReadTask.Wait();
+            var res = Node.InvokeAsync<string>(JSCompilerPath, TemplateReadTask.Result, vm);
+            res.Wait();
+            return res.Result;
+        }
+    }
+
 }
