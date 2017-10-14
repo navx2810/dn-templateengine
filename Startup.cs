@@ -24,7 +24,7 @@ namespace templater
         {
             services.AddMvc();
             services.AddNodeServices();
-            services.AddSingleton<Mojo.Framework.ITemplateEngine, Mojo.Framework.TemplateEngine>();
+            services.AddSingleton<Mojo.Framework.Templating.IEngine, Mojo.Framework.Templating.Engine>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
