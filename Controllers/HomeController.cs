@@ -36,13 +36,11 @@ namespace templater.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult Test([FromServices] Mojo.Framework.ITemplateEngine Engine, [FromServices]IHostingEnvironment env)
+        public IActionResult Test([FromServices] Mojo.Framework.Templating.IEngine Engine, [FromServices]IHostingEnvironment env)
         {
             string p = Path.Combine(env.WebRootPath, "greeting.hbs");
-            var template = Engine.Render(p, new { name = "Matt", today = DateTime.Now });
-
-            template.Wait();
-            return Ok(template.Result);
+            var template = Engine.Compile(p);
+            return Ok(template.Render(new { name = "Matt", today = DateTime.Now }));
         }
     }
 }
