@@ -1,0 +1,4 @@
+Hello from DoT.js
+My name is {{= it.name }}, with uppercase that is {{= it.name.toUpperCase() }}
+{{## def.greeting: "Hello, world" #}}
+{{# def.greeting }}

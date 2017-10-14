@@ -23,7 +23,8 @@ namespace Mojo.Framework.Templating
         private IHostingEnvironment env;
         private Dictionary<string, string> handlers = new Dictionary<string, string>
         {
-            { ".hbs", "hbs.compiler.js" }
+            { ".hbs", "hbs.compiler.js" },
+            { ".dot", "dot.compiler.js" }
         };
         public Engine(INodeServices serv, IHostingEnvironment env) { this.services = serv; this.env = env; }
         ITemplate IEngine.Compile(string relPath)

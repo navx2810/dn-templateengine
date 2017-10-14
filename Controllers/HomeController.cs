@@ -12,10 +12,6 @@ namespace templater.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         public IActionResult About()
         {
@@ -36,11 +32,20 @@ namespace templater.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult Test([FromServices] Mojo.Framework.Templating.IEngine Engine, [FromServices]IHostingEnvironment env)
+        public IActionResult Index([FromServices] Mojo.Framework.Templating.IEngine Engine, [FromServices]IHostingEnvironment env)
         {
+            object vm = new {
+                name = "Matt",
+                today = DateTime.Now,
+                words = new[] { "Hello", "World", "Templating", "Engines", "Aren't", "That", "Bad" }
+            };
             string p = Path.Combine(env.WebRootPath, "greeting.hbs");
             var template = Engine.Compile(p);
-            return Ok(template.Render(new { name = "Matt", today = DateTime.Now }));
+            string html = template.Render(vm);
+            p = Path.Combine(env.WebRootPath, "test.dot");
+            template = Engine.Compile(p);
+            html += "\n" + template.Render(vm);
+            return Ok(html);
         }
     }
 }

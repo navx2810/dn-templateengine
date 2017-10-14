@@ -1,6 +1,7 @@
 {{!-- see "/node/hbs.config.js" for all of these mixins --}}
 {{!-- I'm a comment in handlebars! --}}
 {{!-- 'today' is a C# DateTime, 'name' is a string from viewmodel --}}
+{{assign 'greeting' 'Hello world!'}}
 Hello, {{name}}. How are you today, the date is {{date today "LL"}}?
 {{!-- Raw string values not as a variable in the viewmodel, must be encapsulated as a string --}}
 I'm so {{uppercase "excited"}},
@@ -12,3 +13,20 @@ For the low price of ${{currency 29.3864}}, you too can own this.
 {{!-- 'this' can be used to access the global view model itself --}}
 Here is a JSON printout of the viewmodel {{json this}}
 {{require "/wwwroot/includeme.hbs"}}
+{{name}} says {{greeting}}
+Here are my words
+{{!-- each is a helper for looping through an array --}}
+{{#each words}}
+    {{!-- triple {{{}}} are an unescaped version of interopolation --}}
+    index: {{@index}}
+    {{!-- Key is used if the iteration variable is an object, key will be the property names on that object --}}
+    key: {{@key}}
+    unescaped: {{{this}}}
+    escaped: {{this}}
+    {{#if @first}}
+        I'm first
+    {{/if}}
+    {{#if @last}}
+        I'm last
+    {{/if}}
+{{/each}}

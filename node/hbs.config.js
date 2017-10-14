@@ -32,8 +32,16 @@ hbs.registerHelper("require", function(route, vm) {
     route = path.join('.', route.replace(/^ |~/, ''))
     let template = fs.readFileSync(route,  'utf-8')
     vm = vm || this
-    return hbs.compile(template)(this)
+    return new hbs.SafeString(hbs.compile(template)(this))
 })
+hbs.registerHelper("assign", function(name, val){
+    this[name] = val
+})
+hbs.registerHelper("registerResource", function(res) {
+    return new hbs.SafeString("{% registerResource '" + res + "' %}")
+})
+
+hbs.registerHelper
 
 // Return the configured module
 module.exports = hbs
